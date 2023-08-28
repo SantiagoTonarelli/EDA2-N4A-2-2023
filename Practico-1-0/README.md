@@ -15,3 +15,6 @@
 ## Para comprobar la diferencia de los archivos 
 `diff --strip-trailing-cr prueba.out.txt prueba.mine.txt`
 
+## Para poder debbugear 
+`g++ -g .\Practico-1\ejercicio.cpp`
+#### tambien necesitan tener esta [extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) si o si
