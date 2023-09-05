@@ -4,6 +4,9 @@
         "iostream": "cpp",
         "ostream": "cpp",
         "xstring": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "exception": "cpp",
+        "memory": "cpp",
+        "tuple": "cpp"
     }
 }
