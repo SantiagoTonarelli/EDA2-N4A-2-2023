@@ -70,8 +70,7 @@ public:
     // Post: Deletes all heap nodes and frees the heapArray.
     ~Heap()
     {
-        for (int i = 0; i < top; delete this->heapArray[i++])
-            ;
+        for (int i = 0; i < top; delete this->heapArray[i++]);
         delete[] this->heapArray;
     }
 
