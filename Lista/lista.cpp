@@ -159,26 +159,26 @@ class Lista {
         }
 };
 
-int main(){
-    // IMPORTANTE! BORRAR O COMENTAR LAS SIGUIENTES LINEAS  EN TODOS LOS EJERCICIOS DEL OBLIGATORIO. NO PUEDEN ESTAR EN NINGUNA ENTREGA!
-    ifstream myFile("Lista/in.txt");
-    cin.rdbuf(myFile.rdbuf());
-    // Si desean tirar la salida a un archivo, usen las siguientes líneas (si no, sáquenlas):
-    ofstream myFile2("Lista/out.txt");
-    cout.rdbuf(myFile2.rdbuf());
+// int main(){
+//     // IMPORTANTE! BORRAR O COMENTAR LAS SIGUIENTES LINEAS  EN TODOS LOS EJERCICIOS DEL OBLIGATORIO. NO PUEDEN ESTAR EN NINGUNA ENTREGA!
+//     ifstream myFile("Lista/in.txt");
+//     cin.rdbuf(myFile.rdbuf());
+//     // Si desean tirar la salida a un archivo, usen las siguientes líneas (si no, sáquenlas):
+//     ofstream myFile2("Lista/out.txt");
+//     cout.rdbuf(myFile2.rdbuf());
     
-    Lista<int>* lista = new Lista<int>();
-    int cantNumeros, numero;
-    cin >> cantNumeros;
-    for (int i = 0; i < cantNumeros; i++)
-    {
-        cin >> numero;
-        lista->insertarFin(numero);
-    }
+//     Lista<int>* lista = new Lista<int>();
+//     int cantNumeros, numero;
+//     cin >> cantNumeros;
+//     for (int i = 0; i < cantNumeros; i++)
+//     {
+//         cin >> numero;
+//         lista->insertarFin(numero);
+//     }
 
-    IteradorLista<int> * it = lista->obtenerIterador();
-    while(it->hayElemento()){
-        cout << it->obtenerElemento() << endl;
-        it->avanzar();
-    }
-}
+//     IteradorLista<int> * it = lista->obtenerIterador();
+//     while(it->hayElemento()){
+//         cout << it->obtenerElemento() << endl;
+//         it->avanzar();
+//     }
+// }
