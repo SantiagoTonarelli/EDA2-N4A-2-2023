@@ -470,7 +470,7 @@ int main()
     grafoD.agregarArista("E", "A", 8);
 
     // Ejecutar el algoritmo de Dijkstra desde el vértice "A"
-    cout << "Resultados del algoritmo de Dijkstra desde el vértice A:" << endl;
+    cout << "Resultados del algoritmo de Dijkstra desde el vertice A:" << endl;
     grafoD.dijkstra("A");
 
     return 0;
