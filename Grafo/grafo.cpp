@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 #include "../Lista/lista.cpp"
 #define INF 99999
 using namespace std;
@@ -125,7 +126,7 @@ private:
         camino->mostrar();
         return dist[posDestino];
     }
-    
+
     void dfsRec(int pos, bool *&vis)
     {
         cout << *(this->vertices[pos]) << endl;
@@ -137,6 +138,20 @@ private:
                 dfsRec(i, vis);
             }
         }
+    }
+
+    int posNoVisDeMenorCosto(int *dist, bool *vis)
+    {
+        int posMin = -1, min = INF;
+        for (int i = 0; i < tope; i++)
+        {
+            if (!vis[i] && dist[i] < min)
+            {
+                posMin = i;
+                min = dist[i];
+            }
+        }
+        return posMin;
     }
 
 public:
@@ -309,9 +324,61 @@ public:
             }
         }
     }
+
+    // Dijkstra es conocido por su trabajo en el diseño y análisis de algoritmos,
+    // y es especialmente conocido por su algoritmo de camino más corto, que lleva su
+    // nombre y es ampliamente utilizado en la búsqueda de rutas óptimas en mapas y redes.
+    // También fue un pionero en el desarrollo de la programación estructurada, y es conocido
+    // por haber acuñado el término "insecto" para describir un error de programación.
+    void dijkstra(T origen)
+    {
+        int posOrigen = posVertice(origen);
+        bool *vis = new bool[tope];
+        int *dist = new int[tope];
+        int *ant = new int[tope];
+
+        for (int i = 0; i < tope; i++)
+        {
+            vis[i] = false;
+            dist[i] = INF;
+            ant[i] = -1;
+        }
+
+        dist[posOrigen] = 0;
+
+        for (int i = 0; i < cantVertices; i++)
+        {
+            int proximoVertice = posNoVisDeMenorCosto(dist, vis);
+
+            if (proximoVertice == -1)
+            {
+                break;
+            }
+            for (int j = 0; j < tope; j++)
+            {
+                if (!vis[j] && matAdy[proximoVertice][j]->existe)
+                {
+                    int nuevaDistancia = dist[proximoVertice] + matAdy[proximoVertice][j]->costo;
+                    if (dist[j] > nuevaDistancia)
+                    {
+                        dist[j] = nuevaDistancia;
+                        ant[j] = proximoVertice;
+                    }
+                }
+            }
+            vis[proximoVertice] = true;
+        }
+        cout << "Distancias" << endl;
+        mostrarArray(dist, tope);
+        cout << "Anteriores" << endl;
+        mostrarArray(ant, tope);
+        cout << "Visitados" << endl;
+        mostrarArray(vis, tope);
+    }
 };
 
-int main(){
+int main()
+{
     // // IMPORTANTE! BORRAR O COMENTAR LAS SIGUIENTES LINEAS  EN TODOS LOS EJERCICIOS DEL OBLIGATORIO. NO PUEDEN ESTAR EN NINGUNA ENTREGA!
     // ifstream myFile("Grafo/in.txt");
     // cin.rdbuf(myFile.rdbuf());
@@ -319,30 +386,92 @@ int main(){
     // ofstream myFile2("Grafo/out.txt");
     // cout.rdbuf(myFile2.rdbuf());
     // Crear un grafo con 5 vértices
-    Grafo<int> *g = new Grafo<int>(5, false);
 
-    // Agregar vértices al grafo
-    for (int i = 1; i <= 5; i++)
-    {
-        g->agregarVertice(i);
-    }
+    // PRUEBA BFS Y DFS
+    // Grafo<int> *g = new Grafo<int>(5, false);
 
-    // Agregar aristas entre los vértices
-    g->agregarArista(1, 2, 1); // Arista entre el vértice 1 y 2 con un costo de 1
-    g->agregarArista(1, 3, 1); // Arista entre el vértice 1 y 3 con un costo de 1
-    g->agregarArista(2, 4, 1); // Arista entre el vértice 2 y 4 con un costo de 1
-    g->agregarArista(3, 5, 1); // Arista entre el vértice 3 y 5 con un costo de 1
-    g->agregarArista(4, 5, 1); // Arista entre el vértice 4 y 5 con un costo de 1
+    // // Agregar vértices al grafo
+    // for (int i = 1; i <= 5; i++)
+    // {
+    //     g->agregarVertice(i);
+    // }
 
-    // Llamar a las funciones dfs y bfs
-    cout << "DFS desde el vertice 1:" << endl;
-    g->dfs(1);
+    // // Agregar aristas entre los vértices
+    // g->agregarArista(1, 2, 1); // Arista entre el vértice 1 y 2 con un costo de 1
+    // g->agregarArista(1, 3, 1); // Arista entre el vértice 1 y 3 con un costo de 1
+    // g->agregarArista(2, 4, 1); // Arista entre el vértice 2 y 4 con un costo de 1
+    // g->agregarArista(3, 5, 1); // Arista entre el vértice 3 y 5 con un costo de 1
+    // g->agregarArista(4, 5, 1); // Arista entre el vértice 4 y 5 con un costo de 1
 
-    cout << "\nBFS desde el vertice 1:" << endl;
-    g->bfs(1);
+    // // Llamar a las funciones dfs y bfs
+    // cout << "DFS desde el vertice 1:" << endl;
+    // g->dfs(1);
+
+    // cout << "\nBFS desde el vertice 1:" << endl;
+    // g->bfs(1);
+
+    // // Liberar memoria
+    // delete g;
+
+    // Crear un grafo dirigido con un tope de 5 vértices
+    Grafo<string> grafo(5, true);
+
+    // Agregar vértices
+    grafo.agregarVertice("A");
+    grafo.agregarVertice("B");
+    grafo.agregarVertice("C");
+    grafo.agregarVertice("D");
+    grafo.agregarVertice("E");
+
+    // Agregar aristas
+    // A -> B
+    grafo.agregarArista("A", "B", 1);
+    // A -> C
+    grafo.agregarArista("A", "C", 1);
+    // B -> D
+    grafo.agregarArista("B", "D", 1);
+    // C -> D
+    grafo.agregarArista("C", "D", 1);
+    // D -> E
+    grafo.agregarArista("D", "E", 1);
+
+    // Obtener y mostrar el orden topológico
+    Lista<string> *ordenTop = grafo.ordenTopologico();
+    cout << "Orden Topologico: ";
+    ordenTop->mostrar();
 
     // Liberar memoria
-    delete g;
+    delete ordenTop;
+
+    // Crear un grafo dirigido con un tope de 5 vértices
+    Grafo<string> grafoD(5, true);
+
+    // Agregar vértices
+    grafoD.agregarVertice("A");
+    grafoD.agregarVertice("B");
+    grafoD.agregarVertice("C");
+    grafoD.agregarVertice("D");
+    grafoD.agregarVertice("E");
+
+    // Agregar aristas con sus respectivos costos
+    // A -> B (costo 4)
+    grafoD.agregarArista("A", "B", 4);
+    // A -> C (costo 2)
+    grafoD.agregarArista("A", "C", 2);
+    // B -> C (costo 5)
+    grafoD.agregarArista("B", "C", 5);
+    // B -> D (costo 10)
+    grafoD.agregarArista("B", "D", 10);
+    // C -> D (costo 3)
+    grafoD.agregarArista("C", "D", 3);
+    // D -> E (costo 1)
+    grafoD.agregarArista("D", "E", 1);
+    // E -> A (costo 8)
+    grafoD.agregarArista("E", "A", 8);
+
+    // Ejecutar el algoritmo de Dijkstra desde el vértice "A"
+    cout << "Resultados del algoritmo de Dijkstra desde el vértice A:" << endl;
+    grafoD.dijkstra("A");
 
     return 0;
 }
