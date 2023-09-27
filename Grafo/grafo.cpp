@@ -36,6 +36,10 @@ public:
     Arista() : costo(0), existe(false) {}
 };
 
+int fComp(Arista* a, Arista* b){
+    return a->costo - b->costo;
+}
+
 template <class T>
 class Grafo
 {
@@ -252,7 +256,7 @@ public:
     {
         Lista<T> *ot = new Lista<T>();
         // Inicializo cant incidencias
-        int *cantIncidencias = new int[this->tope];
+        int *cantIncidencias = new int[this->tope]();
         for (int i = 0; i < this->tope; cantIncidencias[i++] = 0)
             ;
         // Recorro matriz marcando incidencias en el vector cantIncidencias
@@ -271,6 +275,7 @@ public:
             int posSinIndicencias = buscarElemSinIncidencias(cantIncidencias);
             if (posSinIndicencias == -1)
             {
+                cout << "El grafo tiene ciclos" << endl;
                 delete ot;
                 return new Lista<T>();
             }
@@ -375,6 +380,96 @@ public:
         cout << "Visitados" << endl;
         mostrarArray(vis, tope);
     }
+
+    void prim(){
+        int* dist = new int[tope];
+        bool* vis = new bool[tope];
+        int* ant = new int[tope];
+        for (int i = 0; i < tope; dist[i]=INF, vis[i]=false, ant[i]=-1, i++);
+        dist[0]=0;
+
+        for (int k = 0; k < cantVertices; k++)
+        {
+            int proxVertice = posNoVisDeMenorCosto(dist, vis);
+            vis[proxVertice] = true;
+            if(ant[proxVertice] != -1){
+                cout << *vertices[ant[proxVertice]] << " --- " << *vertices[proxVertice] << endl;
+            }
+            for (int i = 0; i < tope; i++)
+            {
+                if(!vis[i] && matAdy[proxVertice][i]->existe && dist[i] > matAdy[proxVertice][i]->costo){
+                    dist[i] = matAdy[proxVertice][i]->costo;
+                    ant[i] = proxVertice;
+                }
+            }
+        }
+    }
+
+    void kruskal(){
+        // Se crea una lista dinámica listaAristas para almacenar todas las aristas del grafo.
+        Lista<Arista* > * listaAristas = new Lista<Arista *>();
+        for (int i = 0; i < tope; i++)
+        {
+            for (int j = 0; j < tope; j++)
+            {
+                if(matAdy[i][j]->existe)
+                {
+                    listaAristas->insertarOrd(new Arista(matAdy[i][j]->costo, i, j), fComp);
+                }
+            }
+        }
+
+        // Se crea un arreglo dinámico de listas para representar
+        // las componentes conexas del grafo. Cada componente conexa 
+        // es inicialmente un vértice individual.
+        Lista<int>** compConexas = new Lista<int>*[tope];
+        for (int i = 0; i < tope; i++)
+        {
+            compConexas[i] = new Lista<int>();
+            compConexas[i]->insertarPpio(i);
+        }
+
+        int cantAristas = 0;
+
+        // Mientras no se hayan añadido todas las aristas 
+        // necesarias y aún haya aristas por procesar, se sigue el proceso.
+        while(cantAristas < cantVertices-1 && !listaAristas->esVacia()){
+            Arista* arista = listaAristas->obtenerPpio();
+            listaAristas->borrar(arista);
+
+            int posOrigen = -1, posDestino = -1;
+            for (int i = 0; i < tope; i++)
+            {
+                if(compConexas[i]->pertenece(arista->origen)){
+                    posOrigen = i;
+                }
+                if(compConexas[i]->pertenece(arista->destino)){
+                    posDestino = i;
+                }
+            }
+
+            // Genera ciclo? Si genera, me voy
+            if(posOrigen == posDestino){
+                delete arista;
+                continue;
+            }
+
+            cout << *vertices[arista->origen] << " --- " << *vertices[arista->destino] << endl;
+            // UNION DE COMPONENTES CONEXAS: Si la arista actual conecta dos componentes conexas 
+            // diferentes, se unen en una sola componente conexa.
+            for (IteradorLista<int> * it = compConexas[posDestino]->obtenerIterador(); it->hayElemento(); it->avanzar())
+            {
+                int posVertice = it->obtenerElemento();
+                compConexas[posOrigen]->insertarFin(posVertice);
+            }
+            compConexas[posDestino]->vaciar();
+            delete arista;
+        }
+        for (int i = 0; i < tope; delete compConexas[i++]);
+        delete [] compConexas;
+
+        delete listaAristas;        
+    }
 };
 
 int main()
@@ -413,8 +508,68 @@ int main()
     // // Liberar memoria
     // delete g;
 
-    // Crear un grafo dirigido con un tope de 5 vértices
-    Grafo<string> grafo(5, true);
+    // // Crear un grafo dirigido con un tope de 5 vértices
+    // Grafo<string> grafo(5, true);
+
+    // // Agregar vértices
+    // grafo.agregarVertice("A");
+    // grafo.agregarVertice("B");
+    // grafo.agregarVertice("C");
+    // grafo.agregarVertice("D");
+    // grafo.agregarVertice("E");
+
+    // // Agregar aristas
+    // // A -> B
+    // grafo.agregarArista("A", "B", 1);
+    // // A -> C
+    // grafo.agregarArista("A", "C", 1);
+    // // B -> D
+    // grafo.agregarArista("B", "D", 1);
+    // // C -> D
+    // grafo.agregarArista("C", "D", 1);
+    // // D -> E
+    // grafo.agregarArista("D", "E", 1);
+
+    // // Obtener y mostrar el orden topológico
+    // Lista<string> *ordenTop = grafo.ordenTopologico();
+    // cout << "Orden Topologico: ";
+    // ordenTop->mostrar();
+
+    // // Liberar memoria
+    // delete ordenTop;
+
+    // // Crear un grafo dirigido con un tope de 5 vértices
+    // Grafo<string> grafoD(5, true);
+
+    // // Agregar vértices
+    // grafoD.agregarVertice("A");
+    // grafoD.agregarVertice("B");
+    // grafoD.agregarVertice("C");
+    // grafoD.agregarVertice("D");
+    // grafoD.agregarVertice("E");
+
+    // // Agregar aristas con sus respectivos costos
+    // // A -> B (costo 4)
+    // grafoD.agregarArista("A", "B", 4);
+    // // A -> C (costo 2)
+    // grafoD.agregarArista("A", "C", 2);
+    // // B -> C (costo 5)
+    // grafoD.agregarArista("B", "C", 5);
+    // // B -> D (costo 10)
+    // grafoD.agregarArista("B", "D", 10);
+    // // C -> D (costo 3)
+    // grafoD.agregarArista("C", "D", 3);
+    // // D -> E (costo 1)
+    // grafoD.agregarArista("D", "E", 1);
+    // // E -> A (costo 8)
+    // grafoD.agregarArista("E", "A", 8);
+
+    // // Ejecutar el algoritmo de Dijkstra desde el vértice "A"
+    // cout << "Resultados del algoritmo de Dijkstra desde el vertice A:" << endl;
+    // grafoD.dijkstra("A");
+
+    // Crear un grafo no dirigido con un tope de 5 vértices
+    Grafo<string> grafo(5, false);
 
     // Agregar vértices
     grafo.agregarVertice("A");
@@ -423,55 +578,29 @@ int main()
     grafo.agregarVertice("D");
     grafo.agregarVertice("E");
 
-    // Agregar aristas
-    // A -> B
-    grafo.agregarArista("A", "B", 1);
-    // A -> C
-    grafo.agregarArista("A", "C", 1);
-    // B -> D
-    grafo.agregarArista("B", "D", 1);
-    // C -> D
-    grafo.agregarArista("C", "D", 1);
-    // D -> E
-    grafo.agregarArista("D", "E", 1);
-
-    // Obtener y mostrar el orden topológico
-    Lista<string> *ordenTop = grafo.ordenTopologico();
-    cout << "Orden Topologico: ";
-    ordenTop->mostrar();
-
-    // Liberar memoria
-    delete ordenTop;
-
-    // Crear un grafo dirigido con un tope de 5 vértices
-    Grafo<string> grafoD(5, true);
-
-    // Agregar vértices
-    grafoD.agregarVertice("A");
-    grafoD.agregarVertice("B");
-    grafoD.agregarVertice("C");
-    grafoD.agregarVertice("D");
-    grafoD.agregarVertice("E");
-
     // Agregar aristas con sus respectivos costos
-    // A -> B (costo 4)
-    grafoD.agregarArista("A", "B", 4);
-    // A -> C (costo 2)
-    grafoD.agregarArista("A", "C", 2);
-    // B -> C (costo 5)
-    grafoD.agregarArista("B", "C", 5);
-    // B -> D (costo 10)
-    grafoD.agregarArista("B", "D", 10);
-    // C -> D (costo 3)
-    grafoD.agregarArista("C", "D", 3);
-    // D -> E (costo 1)
-    grafoD.agregarArista("D", "E", 1);
-    // E -> A (costo 8)
-    grafoD.agregarArista("E", "A", 8);
+    // A - B (costo 4)
+    grafo.agregarArista("A", "B", 4);
+    // A - C (costo 2)
+    grafo.agregarArista("A", "C", 2);
+    // B - C (costo 5)
+    grafo.agregarArista("B", "C", 5);
+    // B - D (costo 10)
+    grafo.agregarArista("B", "D", 10);
+    // C - D (costo 3)
+    grafo.agregarArista("C", "D", 3);
+    // D - E (costo 7)
+    grafo.agregarArista("D", "E", 7);
+    // E - A (costo 1)
+    grafo.agregarArista("E", "A", 1);
 
-    // Ejecutar el algoritmo de Dijkstra desde el vértice "A"
-    cout << "Resultados del algoritmo de Dijkstra desde el vertice A:" << endl;
-    grafoD.dijkstra("A");
+    // Ejecutar el algoritmo de Prim
+    cout << "Resultado del algoritmo de Prim:" << endl;
+    grafo.prim();
+
+    // Ejecutar el algoritmo de Kruskal
+    cout << "\nResultado del algoritmo de Kruskal:" << endl;
+    grafo.kruskal();
 
     return 0;
 }
