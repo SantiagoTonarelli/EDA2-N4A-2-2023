@@ -43,10 +43,10 @@ int main()
 
     viaje(destinos, cantDestinos, presupuesto);
     // SALIDA ESPERADA:
-    //     Destino con costo: 400 y satisfaccion: 110
-    //     Destino con costo: 200 y satisfaccion: 50
-    //     Satisfaccion total: 160
-    //     Presupuesto remanente: 100
+    // Destino con costo: 500 y satisfaccion: 150
+    // Destino con costo: 200 y satisfaccion: 50
+    // Satisfaccion total: 200
+    // Presupuesto remanente: 0
 
     // Liberar memoria
     for (int i = 0; i < cantDestinos; delete destinos[i++])
