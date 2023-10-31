@@ -37,6 +37,17 @@ int **mochilaDP(Elemento **elementos, int cantElementos, int capacidad)
         }
     }
 
+    // Imprimir la matriz resultante
+    cout << "Matriz de Programación Dinámica resultante:" << endl;
+    for (int i = 0; i <= cantElementos; i++)
+    {
+        for (int j = 0; j <= capacidad; j++)
+        {
+            cout << matDP[i][j] << "\t";
+        }
+        cout << endl;
+    }
+
     return matDP;
 }
 
@@ -58,32 +69,29 @@ void obtenerCombinacionOptima(int **matDP, Elemento **elementos, int cantElement
 
 int main()
 {
-    int cantElementos;
-    int capacidad;
+    // Predefinir la cantidad de elementos y la capacidad de la mochila.
+    int cantElementos = 5;
+    int capacidad = 10;
 
-    cout << "Ingrese la cantidad de elementos disponibles: ";
-    cin >> cantElementos;
+    // Crear un arreglo de punteros a Elemento con valores predefinidos.
+    Elemento *elementos[] = {
+        new Elemento(2, 3),
+        new Elemento(3, 4),
+        new Elemento(4, 5),
+        new Elemento(5, 8),
+        new Elemento(9, 10)
+    };
 
-    Elemento **elementos = new Elemento *[cantElementos];
-
-    for (int i = 0; i < cantElementos; i++)
-    {
-        int peso;
-        double valor;
-        cout << "Ingrese el peso y valor del elemento " << i + 1 << ": ";
-        cin >> peso >> valor;
-        elementos[i] = new Elemento(peso, valor);
-    }
-
-    cout << "Ingrese la capacidad de la mochila: ";
-    cin >> capacidad;
-
+    // Calcula la solución usando programación dinámica.
     int **matDP = mochilaDP(elementos, cantElementos, capacidad);
 
+    // Obtener la combinación óptima de elementos para la mochila.
     Lista<Elemento *> *seleccionados = new Lista<Elemento *>;
     obtenerCombinacionOptima(matDP, elementos, cantElementos, capacidad, seleccionados);
 
-    cout << "Combinación óptima de elementos para la mochila:" << endl;
+    // Imprimir la combinación óptima de elementos.
+    cout << "Combinación óptima de elementos para la mochila de capacidad " << capacidad << ":" << endl;
+    
     int *contadorElementos = new int[cantElementos]();
     while (!seleccionados->esVacia())
     {
@@ -109,20 +117,17 @@ int main()
 
     // Liberar memoria
     delete[] contadorElementos;
-
     for (int i = 0; i < cantElementos; i++)
     {
         delete elementos[i];
     }
-    delete[] elementos;
-
     for (int i = 0; i <= cantElementos; i++)
     {
         delete[] matDP[i];
     }
     delete[] matDP;
-
     delete seleccionados;
 
     return 0;
 }
+
