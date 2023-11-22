@@ -71,7 +71,10 @@ void caminoBT(){
 void caminoBT(){
     if(tengoQuePodar()) {
         if(esSolucion()) {
-            if(esDeLasMejoresSoluciones()){
+            if(esMejorQueSolucionesOptimasAnteriores()){
+                // vacio la lista de soluciones
+                // la agrego a lista de soluciones 
+            } else if (esIgualQueSolucionesOptimasAnteriores()){
                 // la agrego a lista de soluciones
             }
         } else {
